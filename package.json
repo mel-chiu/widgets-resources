@@ -33,7 +33,6 @@
     "release:data-widgets": "npm run release -- --scope '{datagrid,dropdown-sort,tree-node,gallery}-*'",
     "release:hybrid": "npm run release -- --scope '*-hybrid'",
     "release:native": "npm run release -- --scope '*-native'",
-    "release:native:dev": "npm run release:native && node ./scripts/release/copyReleaseToProject.js",
     "release:web": "npm run release -- --scope '*-web'",
     "create-modules:native": "node ./scripts/release/createNativeModules.js",
     "create-modules:data-widgets": "node ./scripts/release/createDataWidgetsModule.js",
