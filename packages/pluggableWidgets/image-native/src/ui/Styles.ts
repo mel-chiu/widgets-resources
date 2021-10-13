@@ -1,25 +1,22 @@
 import { ViewStyle, ImageStyle } from "react-native";
 import { Style } from "@mendix/piw-native-utils-internal";
+import { GProps } from "react-native-svg";
 
-export interface CustomImageStyle extends ImageStyle {
+export interface IconStyle {
     size?: number;
     color?: string;
-    fill?: string;
-    // stroke?: string;
 }
-
 export interface DefaultImageStyle extends Style {
     container: ViewStyle;
-    image: CustomImageStyle;
+    image: ImageStyle | GProps | IconStyle;
     backdrop: ViewStyle;
 }
 
 export const defaultImageStyle: DefaultImageStyle = {
     container: {},
     image: {
-        backgroundColor: "#FFF",
-        // stroke: "5",
-        color: "red",
+        // backgroundColor: "#FFF",
+        color: "black",
         size: 50
     },
     backdrop: {

@@ -88,7 +88,7 @@ export const GetImageDimensionsComponent: FunctionComponent<GetImageDimensionsCo
                 height: "100%",
                 opacity: 0
             }}
-            pointerEvents={"box-none"}
+            pointerEvents={"none"}
         >
             <SvgUri
                 testID={`${name}$SvgUriTemporary`}
@@ -97,7 +97,6 @@ export const GetImageDimensionsComponent: FunctionComponent<GetImageDimensionsCo
                 style={{
                     opacity: 0
                 }}
-                pointerEvents={"box-none"}
             />
         </View>
     ) : null;

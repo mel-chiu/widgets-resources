@@ -37,7 +37,6 @@ export const Image: FunctionComponent<ImageProps<Style>> = props => {
         const setImageDimensions = async (): Promise<void> => {
             try {
                 const { width, height } = await getImageDimensionsCallback();
-
                 if (width && height) {
                     setInitialDimensions({
                         width,

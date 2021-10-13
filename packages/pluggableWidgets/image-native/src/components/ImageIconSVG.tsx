@@ -1,11 +1,10 @@
 import { createElement, FunctionComponent, Fragment } from "react";
-import { SvgUri, SvgXml } from "react-native-svg";
-import { extractStyles } from "@mendix/pluggable-widgets-tools";
-import { NativeIcon, NativeImage } from "mendix";
-import { Image } from "mendix/components/native/Image";
-import { Icon } from "mendix/components/native/Icon";
-import { CustomImageProps } from "../utils/imageUtils";
 import { View } from "react-native";
+import { SvgUri, SvgXml } from "react-native-svg";
+import FastImageComponent, { Source } from "react-native-fast-image";
+import { extractStyles } from "@mendix/pluggable-widgets-tools";
+import { CustomImageProps, GlyphIcon } from "../utils/imageUtils";
+import { GlyphIcon as GlyphIconComponent } from "./fonts/font";
 
 export interface DimensionsType {
     width: number;
@@ -22,10 +21,31 @@ interface ImageIconSVGProps {
     styles: any;
 }
 
+const excludedImageStyles = [
+    "color",
+    "size",
+    "fill",
+    "fillOpacity",
+    "fillRule",
+    "stroke",
+    "strokeWidth",
+    "strokeOpacity",
+    "strokeDasharray",
+    "strokeDashoffset",
+    "strokeLinecap",
+    "strokeLinejoin",
+    "strokeMiterlimit",
+    "clipRule",
+    "clipPath",
+    "vectorEffect"
+];
+
 export const ImageIconSVG: FunctionComponent<ImageIconSVGProps> = props => {
     const { type, image, dimensions, initialDimensions, styles, name } = props;
-    const [iconProps] = extractStyles(styles, ["size", "color"]);
-    const [svgProps, svgStyles] = extractStyles(styles, ["width", "height", "color", "fill", "stroke"]);
+    // const [iconProps] = extractStyles(styles, ["size", "color"]);
+    const [svgProps, svgStyles] = extractStyles(styles, ["width", "height"]);
+    const [, imageStyles] = extractStyles(styles, excludedImageStyles);
+    svgStyles.fill = svgStyles.fill ?? svgStyles.color ?? undefined;
 
     const updatedSvgProps = {
         ...svgProps,
@@ -45,14 +65,14 @@ export const ImageIconSVG: FunctionComponent<ImageIconSVGProps> = props => {
 
     if (image && (type === "staticImage" || type === "dynamicImage")) {
         return (
-            <Image
-                testID={`${name}$Image`}
-                source={image as NativeImage}
+            <FastImageComponent
+                testID={`${name}$Image`} // Broken because of https://github.com/DylanVann/react-native-fast-image/issues/221
+                source={image as Source | number}
                 style={{
                     width: dimensions?.width,
                     height: dimensions?.height,
                     ...basicStyles,
-                    ...styles
+                    ...imageStyles
                 }}
             />
         );
@@ -83,7 +103,11 @@ export const ImageIconSVG: FunctionComponent<ImageIconSVGProps> = props => {
     if (image && type === "icon") {
         return (
             <View testID={`${name}$Icon`}>
-                <Icon icon={image as NativeIcon} {...iconProps} />
+                <GlyphIconComponent
+                    name={String((image as GlyphIcon).iconClass)}
+                    color={styles?.color ?? "black"}
+                    size={styles?.size ?? 20}
+                />
             </View>
         );
     }

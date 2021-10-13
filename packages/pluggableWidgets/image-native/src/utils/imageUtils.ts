@@ -1,6 +1,6 @@
 import { ValueStatus, DynamicValue, NativeIcon, NativeImage } from "mendix";
 import { Dispatch, SetStateAction } from "react";
-import { Image as RNImage, ImageURISource } from "react-native";
+import { Image as RNImage, ImageURISource, Platform } from "react-native";
 import { DatasourceEnum } from "../../typings/ImageProps";
 import { DimensionsType } from "../components/ImageIconSVG";
 import { calculateSvgDimensions } from "./svgUtils";
@@ -56,12 +56,15 @@ export async function convertImageProps(
             } else if (imageSource.value?.uri && imageSource.value?.name?.endsWith(".svg")) {
                 return {
                     type: "dynamicSVG", // Dynamic image SVG
-                    image: imageSource.value.uri
+                    image: (Platform.OS === "android" ? "file:///" : "") + imageSource.value.uri
                 };
             } else if (imageSource.value?.uri) {
                 return {
                     type: "dynamicImage", // Dynamic image
-                    image: imageSource.value
+                    image: {
+                        ...imageSource.value,
+                        uri: (Platform.OS === "android" ? "file:///" : "") + imageSource.value.uri
+                    }
                 };
             }
             return fallback;
@@ -82,10 +85,18 @@ export async function convertImageProps(
             return fallback;
         case "icon": {
             if (imageIcon?.status === ValueStatus.Available) {
-                return {
-                    type: "icon",
-                    image: imageIcon.value
-                };
+                if (imageIcon.value?.type === "glyph") {
+                    return {
+                        type: "icon",
+                        image: imageIcon.value
+                    };
+                }
+                if (imageIcon.value?.type === "image") {
+                    return {
+                        type: "staticImage",
+                        image: imageIcon.value.iconUrl
+                    };
+                }
             }
             return fallback;
         }
@@ -112,17 +123,7 @@ export function getImageDimensions(source: CustomImageObjectProps): Promise<{ wi
                             if (!bool) {
                                 reject(new Error(`Prefetching image ${source.image} failed.`));
                             }
-                            RNImage.getSize(
-                                uri,
-                                (width, height) => {
-                                    console.warn("getImageDimensions");
-                                    console.warn(width);
-                                    console.warn(height);
-
-                                    resolve({ width, height });
-                                },
-                                reject
-                            );
+                            RNImage.getSize(uri, (width, height) => resolve({ width, height }), reject);
                         })
                         .catch(reject);
                 } else {

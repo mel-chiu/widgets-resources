@@ -34,7 +34,7 @@ export const BackgroundImage: FunctionComponent<BackgroundImageProps> = props =>
             >
                 <ImageIconSVG
                     {...source}
-                    // name={name}
+                    name={name}
                     dimensions={dimensions}
                     initialDimensions={initialDimensions}
                     styles={styles.image}
